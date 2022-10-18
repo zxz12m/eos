@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2014, 2015, 2020 Danny van Dyk
  * Copyright (c) 2019, 2020 Domagoj Leljak
+ * Copyright (c) 2022 Aliaksei Kachanovich
  *
  * This file is part of the EOS project. EOS is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -39,7 +40,7 @@
 namespace eos
 {
     template <>
-    struct Implementation<AnalyticFormFactorDToPiDKMMO2008>
+    struct Implementation<AnalyticFormFactorDToPiDKMMO2009>
     {
         std::shared_ptr<Model> model;
 
@@ -77,24 +78,24 @@ namespace eos
 
         Implementation(const Parameters & p, const Options & o, ParameterUser & u) :
             model(Model::make("SM", p, o)),
-            MD(p["mass::D_d"], u), //B_d -> D_d
+            MD(p["mass::D_d"], u),
             mpi(p["mass::pi^+"], u),
             fpi(p["decay-constant::pi"], u),
             opt_rescale_borel(o, "rescale-borel", { "1", "0" }, "1"),
-            M2(p["B->pi::M^2@DKMMO2008"], u),
-            Mprime2(p["B->pi::Mp^2@DKMMO2008"], u),
-            _s0_plus(p["B->pi::s_0^+(0)@DKMMO2008"], u),
-            _s0_plus_p(p["B->pi::s_0^+'(0)@DKMMO2008"], u),
-            _s0_plus_pp(p["B->pi::s_0^+''(0)@DKMMO2008"], u),
-            _s0_zero(p["B->pi::s_0^0(0)@DKMMO2008"], u),
-            _s0_zero_p(p["B->pi::s_0^0'(0)@DKMMO2008"], u),
-            _s0_zero_pp(p["B->pi::s_0^0''(0)@DKMMO2008"], u),
-            _s0_T(p["B->pi::s_0^T(0)@DKMMO2008"], u),
-            _s0_T_p(p["B->pi::s_0^T'(0)@DKMMO2008"], u),
-            _s0_T_pp(p["B->pi::s_0^T''(0)@DKMMO2008"], u),
-            sprime0B(p["B->pi::sp_0^B@DKMMO2008"], u),
-            mu(p["B->pi::mu@DKMMO2008"], u),
-            zeta_nnlo(p["B->pi::zeta(NNLO)@DKMMO2008"], u),
+            M2(p["D->pi::M^2@DKMMO2009"], u),
+            Mprime2(p["D->pi::Mp^2@DKMMO2009"], u),
+            _s0_plus(p["D->pi::s_0^+(0)@DKMMO2009"], u),
+            _s0_plus_p(p["D->pi::s_0^+'(0)@DKMMO2009"], u),
+            _s0_plus_pp(p["D->pi::s_0^+''(0)@DKMMO2009"], u),
+            _s0_zero(p["D->pi::s_0^0(0)@DKMMO2009"], u),
+            _s0_zero_p(p["D->pi::s_0^0'(0)@DKMMO2009"], u),
+            _s0_zero_pp(p["D->pi::s_0^0''(0)@DKMMO2009"], u),
+            _s0_T(p["D->pi::s_0^T(0)@DKMMO2009"], u),
+            _s0_T_p(p["D->pi::s_0^T'(0)@DKMMO2009"], u),
+            _s0_T_pp(p["D->pi::s_0^T''(0)@DKMMO2009"], u),
+            sprime0B(p["D->pi::sp_0^B@DKMMO2009"], u),
+            mu(p["D->pi::mu@DKMMO2009"], u),
+            zeta_nnlo(p["D->pi::zeta(NNLO)@DKMMO2009"], u),
             m02(p["QCD::m_0^2"], u),
             cond_GG(p["QCD::cond_GG"], u),
             r_vac(p["QCD::r_vac"], u),
@@ -121,29 +122,29 @@ namespace eos
             u.uses(*model);
         }
 
-        inline double m_c_msbar(const double & mu) const //m_b_msbar ->  m_c_msbar
+        inline double m_c_msbar(const double & mu) const 
         {
-            return model->m_c_msbar(mu);  //m_b_msbar ->  m_c_msbar
+            return model->m_c_msbar(mu);  
         }
 
-        inline double s0B(const double & q2) const
+        inline double s0D(const double & q2) const
         {
             return _s0_plus() + _s0_plus_p() * q2 + _s0_plus_pp() * 0.5 * q2 * q2;
         }
 
-        inline double s0tilB(const double & q2) const //the same???
+        inline double s0tilD(const double & q2) const 
         {
             return _s0_zero() + _s0_zero_p() * q2 + _s0_zero_pp() * 0.5 * q2 * q2;
         }
 
-        inline double s0TB(const double & q2) const //What does mean B at the end?
+        inline double s0TD(const double & q2) const
         {
             return _s0_T() + _s0_T_p() * q2 + _s0_T_pp() * 0.5 * q2 * q2;
         }
 
         static double rho_1(const double & s, const double & mc, const double & mu)
         {
-            const double mc2 = mc * mc, x = mc2 / s; // mb -> mc
+            const double mc2 = mc * mc, x = mc2 / s;
             const double lnx = std::log(x), ln1mx = std::log(1.0 - x), re_li2_x = real(dilog(complex<double>(x, 0.0)));
             const double lnmumc = std::log(mu / mc);
 
@@ -158,10 +159,10 @@ namespace eos
 
         static double delta_1(const double & mc, const double & mu, const double & Mprime2)
         {
-            const double mc2 = mc * mc, mu2 = mu * mu; // mb -> mc
+            const double mc2 = mc * mc, mu2 = mu * mu;
             const double gamma = gsl_sf_gamma_inc(0.0, mc2 / Mprime2);
 
-            return -3.0 / 2.0 * (gamma * std::exp(mc2 / Mprime2) - 1.0 - (1.0 - mc2 / Mprime2) * (std::log(mu2 / mc2) + 4.0 / 3.0)); // mb -> mc
+            return -3.0 / 2.0 * (gamma * std::exp(mc2 / Mprime2) - 1.0 - (1.0 - mc2 / Mprime2) * (std::log(mu2 / mc2) + 4.0 / 3.0));
         }
 
         double decay_constant() const
@@ -169,8 +170,8 @@ namespace eos
             static const double pi = M_PI, pi2 = pi * pi;
             static const double eps = 1.0e-10;
 
-            const double MD2 = MD * MD, MD4 = MD2 * MD2; // MB -> MD;
-            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mc4 = mc2 * mc2; //m_b_msbar -> m_c_msbar; mb -> mc
+            const double MD2 = MD * MD, MD4 = MD2 * MD2;
+            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mc4 = mc2 * mc2;
             const double Mprime4 = Mprime2 * Mprime2;
 
             const double cond_qq_mu = -fpi * fpi * this->pi.mupi(mu) / 2.0; // <qq>@mu
@@ -184,15 +185,15 @@ namespace eos
             std::function<double (const double &)> integrand(
                 [&] (const double & s) -> double
                 {
-                    return std::exp(-s / Mprime2) * ((s - mc2) * (s - mc2) / s + 4.0 * alpha_s_mu / (3.0 * pi) * rho_1(s, mc, mu)); // MB -> MD; mb -> mc
+                    return std::exp(-s / Mprime2) * ((s - mc2) * (s - mc2) / s + 4.0 * alpha_s_mu / (3.0 * pi) * rho_1(s, mc, mu));
                 }
             );
-            const double integral = integrate<GSL::QAGS>(integrand, mc2 + eps, sprime0B, config); // MB -> MD; mb -> mc
+            const double integral = integrate<GSL::QAGS>(integrand, mc2 + eps, sprime0B, config);
 
-            double result = std::exp(MD2 / Mprime2) / MD4 * (3.0 * mc2 / (8.0 * pi2) * integral // MB -> MD; mb -> mc
-                + mc2 * std::exp(-mc2 / Mprime2) * ( // MB -> MD; mb -> mc
-                    - mc * cond_qq_mu * (1.0 + 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2)) // mb -> mc
-                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (1.0 - mc2 / (2 * Mprime2)) // MB -> MD; mb -> mc
+            double result = std::exp(MD2 / Mprime2) / MD4 * (3.0 * mc2 / (8.0 * pi2) * integral
+                + mc2 * std::exp(-mc2 / Mprime2) * (
+                    - mc * cond_qq_mu * (1.0 + 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2))
+                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (1.0 - mc2 / (2 * Mprime2))
                     + cond_GG / 12.0
                     - 16.0 * pi * alpha_s_1 * cond_qq_1 * cond_qq_1 * r_vac / (27.0 * Mprime2) * (1.0 - mc2 / (4.0 * Mprime2) - mc4 / (12.0 * Mprime4))
                 )
@@ -201,20 +202,20 @@ namespace eos
             return std::sqrt(result);
         }
 
-        static double delta_1_M2_deriv(const double & mc, const double & mu, const double & Mprime2) // MB -> MD; mb -> mc
+        static double delta_1_M2_deriv(const double & mc, const double & mu, const double & Mprime2)
         {
-            const double mc2 = mc * mc, mu2 = mu * mu; // MB -> MD; mb -> mc
-            const double gamma = gsl_sf_gamma_inc(0.0, mc2 / Mprime2); // MB -> MD; mb -> mc
+            const double mc2 = mc * mc, mu2 = mu * mu;
+            const double gamma = gsl_sf_gamma_inc(0.0, mc2 / Mprime2);
 
-            return -3.0 / 2.0 * (Mprime2 - mc2 * gamma * std::exp(mc2 / Mprime2) - mc2 * (std::log(mu2 / mc2) + 4.0 / 3.0)); // mb -> mc
+            return -3.0 / 2.0 * (Mprime2 - mc2 * gamma * std::exp(mc2 / Mprime2) - mc2 * (std::log(mu2 / mc2) + 4.0 / 3.0));
         }
 
-        double MD_svz() const // MB -> MD
+        double MD_svz() const
         {
             static const double pi = M_PI, pi2 = pi * pi;
             static const double eps = 1.0e-10;
 
-            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mc4 = mc2 * mc2; // MB -> MD; mb -> mc
+            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mc4 = mc2 * mc2;
             const double Mprime4 = Mprime2 * Mprime2;
 
             const double cond_qq_mu = -fpi * fpi * this->pi.mupi(mu) / 2.0; // <qq>@mu
@@ -228,36 +229,36 @@ namespace eos
             std::function<double (const double &)> integrand_numerator(
                 [&] (const double & s) -> double
                 {
-                    return std::exp(-s / Mprime2) * ((s - mc2) * (s - mc2) + 4.0 * s * alpha_s_mu / (3.0 * pi) * rho_1(s, mc, mu)); // MB -> MD; mb -> mc
+                    return std::exp(-s / Mprime2) * ((s - mc2) * (s - mc2) + 4.0 * s * alpha_s_mu / (3.0 * pi) * rho_1(s, mc, mu));
                 }
             );
-            const double integral_numerator = integrate<GSL::QAGS>(integrand_numerator, mc2 + eps, sprime0B, config); // MB -> MD; mb -> mc
+            const double integral_numerator = integrate<GSL::QAGS>(integrand_numerator, mc2 + eps, sprime0B, config);
             std::function<double (const double &)> integrand_denominator(
                 [&] (const double & s) -> double
                 { 
-                    return std::exp(-s / Mprime2) * ((s - mc2) * (s - mc2) / s + 4.0 * alpha_s_mu / (3.0 * pi) * rho_1(s, mc, mu)); // MB -> MD; mb -> mc
+                    return std::exp(-s / Mprime2) * ((s - mc2) * (s - mc2) / s + 4.0 * alpha_s_mu / (3.0 * pi) * rho_1(s, mc, mu));
                 }
             );
-            const double integral_denominator = integrate<GSL::QAGS>(integrand_denominator, mc2 + eps, sprime0B, config); // MB -> MD; mb -> mc
+            const double integral_denominator = integrate<GSL::QAGS>(integrand_denominator, mc2 + eps, sprime0B, config);
 
-            double numerator = 3.0 * mc2 / (8.0 * pi2) * integral_numerator // MB -> MD; mb -> mc
-                + mc4 * std::exp(-mc2 / Mprime2) * ( // MB -> MD; mb -> mc
-                    - mc * cond_qq_mu * (1.0 + 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2)) // MB -> MD; mb -> mc
-                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (1.0 - mc2 / (2 * Mprime2)) // MB -> MD; mb -> mc
+            double numerator = 3.0 * mc2 / (8.0 * pi2) * integral_numerator
+                + mc4 * std::exp(-mc2 / Mprime2) * (
+                    - mc * cond_qq_mu * (1.0 + 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2))
+                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (1.0 - mc2 / (2 * Mprime2))
                     + cond_GG / 12.0
-                    - 16.0 * pi * alpha_s_1 * cond_qq_1 * cond_qq_1 / (27.0 * Mprime2) * (1.0 - mc2 / (4.0 * Mprime2) - mc4 / (12.0 * Mprime4)) // MB -> MD; mb -> mc
+                    - 16.0 * pi * alpha_s_1 * cond_qq_1 * cond_qq_1 / (27.0 * Mprime2) * (1.0 - mc2 / (4.0 * Mprime2) - mc4 / (12.0 * Mprime4)) 
                 )
                 + mc2 * std::exp(-mc2 / Mprime2) * (
-                    - mc * cond_qq_mu * 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2)// MB -> MD; mb -> mc
-                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (mc2 - Mprime2) // MB -> MD; mb -> mc
-                    + 16.0 * pi * alpha_s_1 * cond_qq_1 * cond_qq_1 / (27.0 * 4.0 * Mprime4) * (4.0 * Mprime4 - 2.0 * Mprime2 * mc2 - mc4) // mb -> mc
+                    - mc * cond_qq_mu * 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2)
+                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (mc2 - Mprime2) 
+                    + 16.0 * pi * alpha_s_1 * cond_qq_1 * cond_qq_1 / (27.0 * 4.0 * Mprime4) * (4.0 * Mprime4 - 2.0 * Mprime2 * mc2 - mc4)
                 );
-            double denominator = 3.0 * mc2 / (8.0 * pi2) * integral_denominator // MB -> MD; mb -> mc
-                + mc2 * std::exp(-mc2 / Mprime2) * ( // MB -> MD; mb -> mc
-                    - mc * cond_qq_mu * (1.0 + 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2)) // MB -> MD; mb -> mc
-                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (1.0 - mc2 / (2 * Mprime2)) // MB -> MD; mb -> mc
+            double denominator = 3.0 * mc2 / (8.0 * pi2) * integral_denominator
+                + mc2 * std::exp(-mc2 / Mprime2) * ( 
+                    - mc * cond_qq_mu * (1.0 + 4.0 * alpha_s_mu / (3.0 * pi) * delta_1(mc, mu, Mprime2))
+                    - mc * cond_qq_1  * m02 / (2.0 * Mprime2) * (1.0 - mc2 / (2 * Mprime2))
                     + cond_GG / 12.0
-                    - 16.0 * pi * alpha_s_1 * cond_qq_1 * cond_qq_1 / (27.0 * Mprime2) * (1.0 - mc2 / (4.0 * Mprime2) - mc4 / (12.0 * Mprime4)) // MB -> MD; mb -> mc
+                    - 16.0 * pi * alpha_s_1 * cond_qq_1 * cond_qq_1 / (27.0 * Mprime2) * (1.0 - mc2 / (4.0 * Mprime2) - mc4 / (12.0 * Mprime4))
                 );
 
             return std::sqrt(numerator / denominator);
@@ -265,30 +266,30 @@ namespace eos
 
         double F_lo_tw2_integrand(const double & u, const double & q2, const double _M2, const double & _select_weight) const
         {
-            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi; // MB -> MD; mb -> mc
+            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi;
 
             // _select_weight:
             //  0.0 -> regular integral
             //  1.0 -> integral of derivative w.r.t. -1/M^2
-            const double weight = (1.0 - _select_weight) + _select_weight * (mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / u; // MB -> MD; mb -> mc
+            const double weight = (1.0 - _select_weight) + _select_weight * (mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / u;
 
-            return weight * std::exp(-(mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / (u * _M2)) / u * this->pi.phi(u, mu); // MB -> MD; mb -> mc
+            return weight * std::exp(-(mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / (u * _M2)) / u * this->pi.phi(u, mu);
         }
 
         double F_lo_tw2(const double & q2, const double & _M2, const double & _select_weight = 0.0, const double & _select_corr = 0.0) const
         {
-            const double mc = this->m_c_msbar(mu), mc2 = mc * mc;  // MB -> MD; mb -> mc
-            const double s0 = s0B(q2) * (1.0 - _select_corr) + s0tilB(q2) * _select_corr;
-            const double u0 = std::max(1e-10, (mc2 - q2) / (s0 - q2)); // MB -> MD; mb -> mc
+            const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
+            const double s0 = s0D(q2) * (1.0 - _select_corr) + s0tilD(q2) * _select_corr;
+            const double u0 = std::max(1e-10, (mc2 - q2) / (s0 - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2008>::F_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::F_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
-            return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config); // MB -> MD; mb -> mc
+            return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
 
         double F_lo_tw3_integrand(const double & u, const double & q2, const double & _M2, const double & _select_weight) const
         {
-            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi; // mb -> mc; m_b_msbar -> m_c_msbar
+            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi;
             const double mupi = pi.mupi(mu);
             const double omega3pi = pi.omega3pi(mu);
 
@@ -322,38 +323,37 @@ namespace eos
             const double tw3a = pi.phi3p(u, mu)
                 + (
                     pi.phi3s(u, mu) / u
-                    - (mc2 + q2 - u2 * mpi2) / (2 * (mc2 - q2 + u2 * mpi2)) * pi.phi3s_d1(u, mu) // MB -> MD; mb -> mc
-                    - (2 * u * mpi2 * mc2) / power_of<2>(mc2 - q2 + u2 * mpi2) * pi.phi3s(u, mu) // MB -> MD; mb -> mc
+                    - (mc2 + q2 - u2 * mpi2) / (2 * (mc2 - q2 + u2 * mpi2)) * pi.phi3s_d1(u, mu)
+                    - (2 * u * mpi2 * mc2) / power_of<2>(mc2 - q2 + u2 * mpi2) * pi.phi3s(u, mu)
                 ) / 3.0;
-            const double tw3b = 2.0 / u * (mc2 - q2 - u2 * mpi2) / (mc2 - q2 + u2 * mpi2) // MB -> MD; mb -> mc
-                * (I3_d1(u) - (2.0 * u * mpi2) / (mc2 - q2 + u2 * mpi2) * I3(u)); // MB -> MD; mb -> mc
-            const double tw3c = 3.0 * mpi2 / (mc2 - q2 + u2 * mpi2) // MB -> MD; mb -> mc
-                * (I3bar_d1(u) - (2.0 * u * mpi2) / (mc2 - q2 + u2 * mpi2) * I3bar(u)); // MB -> MD; mb -> mc
+            const double tw3b = 2.0 / u * (mc2 - q2 - u2 * mpi2) / (mc2 - q2 + u2 * mpi2)
+                * (I3_d1(u) - (2.0 * u * mpi2) / (mc2 - q2 + u2 * mpi2) * I3(u));
+            const double tw3c = 3.0 * mpi2 / (mc2 - q2 + u2 * mpi2)
+                * (I3bar_d1(u) - (2.0 * u * mpi2) / (mc2 - q2 + u2 * mpi2) * I3bar(u));
 
             // _select_weight:
             //  0.0 -> regular integral
             //  1.0 -> integral of derivative w.r.t. -1/M^2
-            const double weight = (1.0 - _select_weight) + _select_weight * (mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / u; // mb -> mc
+            const double weight = (1.0 - _select_weight) + _select_weight * (mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / u;
 
-            return std::exp(-(mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / (u * _M2)) // MB -> MD; mb -> mc
-                * weight * (mupi / mc * tw3a - pi.f3pi(mu) / (mc * fpi) * (tw3b + tw3c)); // MB -> MD; mb -> mc
+            return std::exp(-(mc2 - q2 * (1.0 - u) + mpi2 * u * (1.0 - u)) / (u * _M2))
+                * weight * (mupi / mc * tw3a - pi.f3pi(mu) / (mc * fpi) * (tw3b + tw3c));
         }
 
         double F_lo_tw3(const double & q2, const double & _M2, const double & _select_weight = 0.0, const double & _select_corr = 0.0) const
         {
-            const double mc = this->m_c_msbar(mu), mc2 = mc * mc; // mb -> mc 
-            const double s0 = s0B(q2) * (1.0 - _select_corr) + s0tilB(q2) * _select_corr;
-            const double u0 = std::max(1e-10, (mc2 - q2) / (s0 - q2)); // mb -> mc
+            const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
+            const double s0 = s0D(q2) * (1.0 - _select_corr) + s0tilD(q2) * _select_corr;
+            const double u0 = std::max(1e-10, (mc2 - q2) / (s0 - q2));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::F_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2008>::F_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
-
-            return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config); // mb -> mc
+            return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
 
         double F_lo_tw4(const double & q2, const double & _M2, const double & _select_weight = 0.0, const double & _select_corr = 0.0) const
         {
-            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi, mpi4 = mpi2 * mpi2; // mb -> mc
-            const double s0 = s0B(q2) * (1.0 - _select_corr) + s0tilB(q2) * _select_corr;
+            const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi, mpi4 = mpi2 * mpi2;
+            const double s0 = s0D(q2) * (1.0 - _select_corr) + s0tilD(q2) * _select_corr;
             const double u0 = std::max(1e-10, (mc2 - q2) / (s0 - q2));
             const double a2pi = pi.a2pi(mu);
             const double deltapipi = pi.deltapipi(mu);
@@ -459,7 +459,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2008], p. 21.
+            // of [DKMMO2009], p. 21.
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double a2pi = pi.a2pi(mu), a4pi = pi.a4pi(mu);
             const double r1 = q2 / mc2;
@@ -646,7 +646,7 @@ namespace eos
 
             static const double eps = 1e-12;
 
-            return mc2 * fpi * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0B(q2) / mc2, config);
+            return mc2 * fpi * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0D(q2) / mc2, config);
         }
 
         double F_nlo_tw3(const double & q2, const double _M2, const double & _select_weight = 0.0) const
@@ -654,7 +654,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2008], p. 21.
+            // of [DKMMO2009], p. 21.
 
             static const double pi2 = M_PI * M_PI;
 
@@ -836,7 +836,7 @@ namespace eos
             const double weight = (1.0 - _select_weight) + _select_weight * mc2;
 
             return fpi * mupi * mc * (
-                    integrate<GSL::QAGS>(integrand, 1.0 + eps, s0B(q2) / mc2, config)
+                    integrate<GSL::QAGS>(integrand, 1.0 + eps, s0D(q2) / mc2, config)
                     - (
                         2.0 / (1.0 - r1) * (4.0 - 3.0 * lmu)
                         + 2.0 * (1.0 + r1) / power_of<2>(1.0 - r1) * (4.0 - 3.0 * lmu)
@@ -884,9 +884,9 @@ namespace eos
         double Ftil_lo_tw3(const double & q2, const double & _M2, const double & _select_weight = 0.0) const
         {
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
-            const double u0 = std::max(1e-10, (mc2 - q2) / (s0tilB(q2) - q2));
+            const double u0 = std::max(1e-10, (mc2 - q2) / (s0tilD(q2) - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2008>::Ftil_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::Ftil_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -894,7 +894,7 @@ namespace eos
         double Ftil_lo_tw4(const double & q2, const double & _M2, const double & _select_weight = 0.0) const
         {
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi, mpi4 = mpi2 * mpi2;
-            const double u0 = std::max(1e-10, (mc2 - q2) / (s0tilB(q2) - q2));
+            const double u0 = std::max(1e-10, (mc2 - q2) / (s0tilD(q2) - q2));
             const double a2pi = pi.a2pi(mu);
             const double deltapipi = pi.deltapipi(mu);
             const double omega4pi = pi.omega4pi(mu);
@@ -970,7 +970,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2008], p. 21.
+            // of [DKMMO2009], p. 21.
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double a2pi = pi.a2pi(mu), a4pi = pi.a4pi(mu);
             const double r1 = q2 / mc2;
@@ -1104,7 +1104,7 @@ namespace eos
 
             static const double eps = 1e-12;
 
-            return mc2 * fpi * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0tilB(q2) / mc2, config);
+            return mc2 * fpi * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0tilD(q2) / mc2, config);
         }
 
         double Ftil_nlo_tw3(const double & q2, const double _M2, const double & _select_weight = 0.0) const
@@ -1112,7 +1112,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2008], p. 21.
+            // of [DKMMO2009], p. 21.
 
             static const double pi2 = M_PI * M_PI;
 
@@ -1213,7 +1213,7 @@ namespace eos
                     }
                     catch (...)
                     {
-                        throw InternalError("could not evaluate integrand of Ftil_nlo_tw3; r2 = " + stringify(s0tilB(q2) / mc2));
+                        throw InternalError("could not evaluate integrand of Ftil_nlo_tw3; r2 = " + stringify(s0tilD(q2) / mc2));
                     }
                 }
             );
@@ -1222,11 +1222,11 @@ namespace eos
 
             try
             {
-                return fpi * mupi * mc * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0tilB(q2) / mc2, config);
+                return fpi * mupi * mc * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0tilD(q2) / mc2, config);
             }
             catch (...)
             {
-                throw InternalError("could not integrate Ftil_nlo_tw3; r2 = " + stringify(s0tilB(q2) / mc2));
+                throw InternalError("could not integrate Ftil_nlo_tw3; r2 = " + stringify(s0tilD(q2) / mc2));
             }
         }
 
@@ -1245,9 +1245,9 @@ namespace eos
         double FT_lo_tw2(const double & q2, const double & _M2, const double & _select_weight = 0.0) const
         {
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
-            const double u0 = std::max(1e-10, (mc2 - q2) / (s0TB(q2) - q2));
+            const double u0 = std::max(1e-10, (mc2 - q2) / (s0TD(q2) - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2008>::FT_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::FT_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -1270,9 +1270,9 @@ namespace eos
         double FT_lo_tw3(const double & q2, const double & _M2, const double & _select_weight = 0.0) const
         {
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
-            const double u0 = std::max(1e-10, (mc2 - q2) / (s0TB(q2) - q2));
+            const double u0 = std::max(1e-10, (mc2 - q2) / (s0TD(q2) - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2008>::FT_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::FT_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -1280,7 +1280,7 @@ namespace eos
         double FT_lo_tw4(const double & q2, const double & _M2, const double & _select_weight = 0.0) const
         {
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc, mpi2 = mpi * mpi, mpi4 = mpi2 * mpi2;
-            const double u0 = std::max(1e-10, (mc2 - q2) / (s0TB(q2) - q2));
+            const double u0 = std::max(1e-10, (mc2 - q2) / (s0TD(q2) - q2));
             const double a2pi = pi.a2pi(mu);
             const double deltapipi = pi.deltapipi(mu);
             const double omega4pi = pi.omega4pi(mu);
@@ -1346,7 +1346,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2008], p. 21.
+            // of [DKMMO2009], p. 21.
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double a2pi = pi.a2pi(mu), a4pi = pi.a4pi(mu);
             const double r1 = q2 / mc2;
@@ -1559,7 +1559,7 @@ namespace eos
 
             static const double eps = 1e-12;
 
-            return mc * fpi * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0TB(q2) / mc2, config);
+            return mc * fpi * integrate<GSL::QAGS>(integrand, 1.0 + eps, s0TD(q2) / mc2, config);
         }
 
         double FT_nlo_tw3(const double & q2, const double _M2, const double & _select_weight = 0.0) const
@@ -1567,7 +1567,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2008], p. 21.
+            // of [DKMMO2009], p. 21.
 
             static const double pi2 = M_PI * M_PI;
 
@@ -1700,7 +1700,7 @@ namespace eos
             //  1.0 -> integral of derivative w.r.t. -1/M^2
             const double weight = (1.0 - _select_weight) + _select_weight * mc2;
 
-            return fpi * mupi * (integrate<GSL::QAGS>(integrand, 1.0 + eps, s0TB(q2) / mc2, config)
+            return fpi * mupi * (integrate<GSL::QAGS>(integrand, 1.0 + eps, s0TD(q2) / mc2, config)
                     - 4.0 * (4.0 - 3.0 * lmu) * weight * std::exp(-mc2 / _M2) / power_of<2>(1.0 - q2 / mc2)
                     );
         }
@@ -1714,8 +1714,8 @@ namespace eos
         double _rescale_factor_p(const double & q2) const
         {
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
-            const double u0_q2 = std::max(1e-10, (mc2 - q2) / (s0B(q2) - q2));
-            const double u0_zero = std::max(1e-10, mc2 / s0B(q2));
+            const double u0_q2 = std::max(1e-10, (mc2 - q2) / (s0D(q2) - q2));
+            const double u0_zero = std::max(1e-10, mc2 / s0D(q2));
 
             std::function<double (const double &)> integrand_numerator_q2(
                 [&] (const double & u) -> double
@@ -1751,8 +1751,8 @@ namespace eos
         {
             const double MD2 = MD * MD, mpi2 = mpi * mpi;
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
-            const double u0_q2 = std::max(1e-10, (mc2 - q2) / (s0tilB(q2) - q2));
-            const double u0_zero = std::max(1e-10, mc2 / s0tilB(q2));
+            const double u0_q2 = std::max(1e-10, (mc2 - q2) / (s0tilD(q2) - q2));
+            const double u0_zero = std::max(1e-10, mc2 / s0tilD(q2));
 
             std::function<double (const double &)> integrand_numerator_q2(
                 [&] (const double & u) -> double
@@ -1794,8 +1794,8 @@ namespace eos
         double _rescale_factor_T(const double & q2) const
         {
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
-            const double u0_q2 = std::max(1e-10, (mc2 - q2) / (s0TB(q2) - q2));
-            const double u0_zero = std::max(1e-10, mc2 / s0TB(q2));
+            const double u0_q2 = std::max(1e-10, (mc2 - q2) / (s0TD(q2) - q2));
+            const double u0_zero = std::max(1e-10, mc2 / s0TD(q2));
 
             std::function<double (const double &)> integrand_numerator_q2(
                 [&] (const double & u) -> double
@@ -1828,7 +1828,7 @@ namespace eos
             return result;
         }
 
-        double MDp_lcsr(const double & q2) const // Probably need to be MDp_lscsr???????????
+        double MDp_lcsr(const double & q2) const
         {
             const double M2_rescaled = this->M2() * this->rescale_factor_p(q2);
             const double alpha_s = model->alpha_s(mu);
@@ -1908,7 +1908,7 @@ namespace eos
         {
             const double MD2 = MD * MD;
             const double M2_rescaled = this->M2() * this->rescale_factor_p(q2);
-            const double fB = decay_constant();
+            const double fD = decay_constant();
             const double F_lo = F_lo_tw2(q2, M2_rescaled) + F_lo_tw3(q2, M2_rescaled) + F_lo_tw4(q2, M2_rescaled);
             const double F_nlo = F_nlo_tw2(q2, M2_rescaled) + F_nlo_tw3(q2, M2_rescaled);
             /*
@@ -1918,7 +1918,7 @@ namespace eos
             const double F_nnlo = F_nlo * F_nlo / F_lo * zeta_nnlo;
             const double alpha_s = model->alpha_s(mu);
 
-            return std::exp(MD2 / M2_rescaled) / (2.0 * MD2 * fB) * (F_lo + alpha_s / (3.0 * M_PI) * F_nlo + alpha_s * alpha_s / (9.0 * M_PI * M_PI) * F_nnlo);
+            return std::exp(MD2 / M2_rescaled) / (2.0 * MD2 * fD) * (F_lo + alpha_s / (3.0 * M_PI) * F_nlo + alpha_s * alpha_s / (9.0 * M_PI * M_PI) * F_nnlo);
         }
 
         double f_0(const double & q2) const
@@ -1929,7 +1929,7 @@ namespace eos
 
             const double MD2 = MD * MD, mpi2 = mpi * mpi;
             const double M2_rescaled = this->M2() * this->rescale_factor_0(q2);
-            const double fB = decay_constant();
+            const double fD = decay_constant();
             const double F_lo = F_lo_tw2(q2, M2_rescaled) + F_lo_tw3(q2, M2_rescaled) + F_lo_tw4(q2, M2_rescaled);
             const double F_nlo = F_nlo_tw2(q2, M2_rescaled) + F_nlo_tw3(q2, M2_rescaled);
             const double Ftil_lo = Ftil_lo_tw3(q2, M2_rescaled) + Ftil_lo_tw4(q2, M2_rescaled);
@@ -1937,241 +1937,238 @@ namespace eos
             //const double Ftil_nnlo = F_nlo * F_nlo / F_lo * zeta_nnlo;
             const double alpha_s = model->alpha_s(mu);
 
-            return std::exp(MD2 / M2_rescaled) / (2.0 * MD2 * fB) * (2.0 * q2 / (MD2 - mpi2) * (Ftil_lo + alpha_s / (3.0 * M_PI) * Ftil_nlo) + (1.0 - q2 / (MD2 - mpi)) * (F_lo + alpha_s / (3.0 * M_PI) * F_nlo));
+            return std::exp(MD2 / M2_rescaled) / (2.0 * MD2 * fD) * (2.0 * q2 / (MD2 - mpi2) * (Ftil_lo + alpha_s / (3.0 * M_PI) * Ftil_nlo) + (1.0 - q2 / (MD2 - mpi)) * (F_lo + alpha_s / (3.0 * M_PI) * F_nlo));
         }
 
         double f_t(const double & q2) const
         {
             const double MD2 = MD * MD;
             const double M2_rescaled = this->M2() * this->rescale_factor_T(q2);
-            const double fB = decay_constant();
+            const double fD = decay_constant();
             const double FT_lo = FT_lo_tw2(q2, M2_rescaled) + FT_lo_tw3(q2, M2_rescaled) + FT_lo_tw4(q2, M2_rescaled);
             const double FT_nlo = FT_nlo_tw2(q2, M2_rescaled) + FT_nlo_tw3(q2, M2_rescaled);
             //const double FT_nnlo = FT_nlo * FT_nlo / FT_lo * zeta_nnlo;
             const double alpha_s = model->alpha_s(mu);
 
-            return std::exp(MD2 / M2_rescaled) / (2.0 * MD2 * fB) * (MD + mpi) * (FT_lo + alpha_s / (3.0 * M_PI) * FT_nlo);
+            return std::exp(MD2 / M2_rescaled) / (2.0 * MD2 * fD) * (MD + mpi) * (FT_lo + alpha_s / (3.0 * M_PI) * FT_nlo);
         }
 
         Diagnostics diagnostics() const
         {
             Diagnostics results;
 
-            // Function rho_1, cf. [DKMMO2008], eq. (C.2)
+            // Function rho_1, cf. [KKMO:2009A], eq. (C.2)
             {
-                results.add(Diagnostics::Entry{ rho_1(19.60, 4.16, 4.16), "rho_1(s = 19.60, m_b = 4.16, mu = 4.16), [DKMMO2008]" });
-                results.add(Diagnostics::Entry{ rho_1(22.05, 4.16, 4.16), "rho_1(s = 22.05, m_b = 4.16, mu = 4.16), [DKMMO2008]" });
-                results.add(Diagnostics::Entry{ rho_1(25.20, 4.16, 4.16), "rho_1(s = 25.20, m_b = 4.16, mu = 4.16), [DKMMO2008]" });
+                results.add(Diagnostics::Entry{ rho_1(6.5, 1.27, 1.4), "rho_1(s = 6.5, m_c = 1.27, mu = 1.4), [KKMO:2009A]" });
+                results.add(Diagnostics::Entry{ rho_1(7.0, 1.27, 1.4), "rho_1(s = 7.0, m_c = 1.27, mu = 1.4), [KKMO:2009A]" });
+                results.add(Diagnostics::Entry{ rho_1(7.5, 1.27, 1.4), "rho_1(s = 7.5, m_c = 1.27, mu = 1.4), [KKMO:2009A]" });
             }
 
-            results.add(Diagnostics::Entry{ this->decay_constant(), "f_B, [DKMM02008]" });
+            results.add(Diagnostics::Entry{ this->decay_constant(), "f_D, [KKMO:2009A]" });
 
-            results.add(Diagnostics::Entry{ this->rescale_factor_p( 0.0), "rescale_factor_p(s =  0.0), [DKMMO2008]" });
-            results.add(Diagnostics::Entry{ this->rescale_factor_p(10.0), "rescale_factor_p(s = 10.0), [DKMMO2008]" });
+            results.add(Diagnostics::Entry{ this->rescale_factor_p( 0.0), "rescale_factor_p(s =  0.0), [KKMO:2009A]" });
+            results.add(Diagnostics::Entry{ this->rescale_factor_p(10.0), "rescale_factor_p(s = 10.0), [KKMO:2009A]" });
 
-            results.add(Diagnostics::Entry{ this->rescale_factor_0( 0.0), "rescale_factor_0(s =  0.0), [DKMMO2008]" });
-            results.add(Diagnostics::Entry{ this->rescale_factor_0(10.0), "rescale_factor_0(s = 10.0), [DKMMO2008]" });
+            results.add(Diagnostics::Entry{ this->rescale_factor_0( 0.0), "rescale_factor_0(s =  0.0), [KKMO:2009A]" });
+            results.add(Diagnostics::Entry{ this->rescale_factor_0(10.0), "rescale_factor_0(s = 10.0), [KKMO:2009A]" });
 
-            results.add(Diagnostics::Entry{ this->rescale_factor_T( 0.0), "rescale_factor_T(s =  0.0), [DKMMO2008]" });
-            results.add(Diagnostics::Entry{ this->rescale_factor_T(10.0), "rescale_factor_T(s = 10.0), [DKMMO2008]" });
+            results.add(Diagnostics::Entry{ this->rescale_factor_T( 0.0), "rescale_factor_T(s =  0.0), [KKMO:2009A]" });
+            results.add(Diagnostics::Entry{ this->rescale_factor_T(10.0), "rescale_factor_T(s = 10.0), [KKMO:2009A]" });
 
-            results.add(Diagnostics::Entry{ this->MDp_lcsr( 0.0), "M_B(f_+, q2 =  0.0), [DKMMO2008]"});
-            results.add(Diagnostics::Entry{ this->MDp_lcsr(10.0), "M_B(f_+, q2 =  0.0), [DKMMO2008]"});
+            results.add(Diagnostics::Entry{ this->MDp_lcsr( 0.0), "M_D(f_+, q2 =  0.0), [KKMO:2009A]"});
+            results.add(Diagnostics::Entry{ this->MDp_lcsr(10.0), "M_D(f_+, q2 =  0.0), [KKMO:2009A]"});
 
-            results.add(Diagnostics::Entry{ this->MD0_lcsr( 0.0), "M_B(f_0, q2 =  0.0), [DKMMO2008]"});
-            results.add(Diagnostics::Entry{ this->MD0_lcsr(10.0), "M_B(f_0, q2 = 10.0), [DKMMO2008]"});
+            results.add(Diagnostics::Entry{ this->MD0_lcsr( 0.0), "M_D(f_0, q2 =  0.0), [KKMO:2009A]"});
+            results.add(Diagnostics::Entry{ this->MD0_lcsr(10.0), "M_D(f_0, q2 = 10.0), [KKMO:2009A]"});
 
-            results.add(Diagnostics::Entry{ this->MDT_lcsr( 0.0), "M_B(f_T, q2 =  0.0), [DKMMO2008]"});
-            results.add(Diagnostics::Entry{ this->MDT_lcsr(10.0), "M_B(f_T, q2 = 10.0), [DKMMO2008]"});
+            results.add(Diagnostics::Entry{ this->MDT_lcsr( 0.0), "M_D(f_T, q2 =  0.0), [KKMO:2009A]"});
+            results.add(Diagnostics::Entry{ this->MDT_lcsr(10.0), "M_D(f_T, q2 = 10.0), [KKMO:2009A]"});
 
             return results;
         }
     };
 
     const std::vector<OptionSpecification>
-    Implementation<AnalyticFormFactorDToPiDKMMO2008>::options
+    Implementation<AnalyticFormFactorDToPiDKMMO2009>::options
     {
         { "rescale-borel", { "1", "0" }, "1" }
     };
 
-    AnalyticFormFactorDToPiDKMMO2008::AnalyticFormFactorDToPiDKMMO2008(const Parameters & p, const Options & o) :
-        PrivateImplementationPattern<AnalyticFormFactorDToPiDKMMO2008>(new Implementation<AnalyticFormFactorDToPiDKMMO2008>(p, o, *this))
+    AnalyticFormFactorDToPiDKMMO2009::AnalyticFormFactorDToPiDKMMO2009(const Parameters & p, const Options & o) :
+        PrivateImplementationPattern<AnalyticFormFactorDToPiDKMMO2009>(new Implementation<AnalyticFormFactorDToPiDKMMO2009>(p, o, *this))
     {
     }
 
-    AnalyticFormFactorDToPiDKMMO2008::~AnalyticFormFactorDToPiDKMMO2008()
+    AnalyticFormFactorDToPiDKMMO2009::~AnalyticFormFactorDToPiDKMMO2009()
     {
     }
 
     FormFactors<PToP> *
-    AnalyticFormFactorDToPiDKMMO2008::make(const Parameters & p, const Options & o)
+    AnalyticFormFactorDToPiDKMMO2009::make(const Parameters & p, const Options & o)
     {
-        return new AnalyticFormFactorDToPiDKMMO2008(p, o);
+        return new AnalyticFormFactorDToPiDKMMO2009(p, o);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::F_lo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::F_lo_tw2(const double & q2) const
     {
         return _imp->F_lo_tw2(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::F_lo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::F_lo_tw3(const double & q2) const
     {
         return _imp->F_lo_tw3(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::F_lo_tw4(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::F_lo_tw4(const double & q2) const
     {
         return _imp->F_lo_tw4(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::F_nlo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::F_nlo_tw2(const double & q2) const
     {
         return _imp->F_nlo_tw2(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::F_nlo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::F_nlo_tw3(const double & q2) const
     {
         return _imp->F_nlo_tw3(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
     
     double
-    AnalyticFormFactorDToPiDKMMO2008::Ftil_lo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::Ftil_lo_tw3(const double & q2) const
     {
         return _imp->Ftil_lo_tw3(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::Ftil_lo_tw4(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::Ftil_lo_tw4(const double & q2) const
     {
         return _imp->Ftil_lo_tw4(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::Ftil_nlo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::Ftil_nlo_tw2(const double & q2) const
     {
         return _imp->Ftil_nlo_tw2(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::Ftil_nlo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::Ftil_nlo_tw3(const double & q2) const
     {
         return _imp->Ftil_nlo_tw3(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::FT_lo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::FT_lo_tw2(const double & q2) const
     {
         return _imp->FT_lo_tw2(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::FT_lo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::FT_lo_tw3(const double & q2) const
     {
         return _imp->FT_lo_tw3(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::FT_lo_tw4(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::FT_lo_tw4(const double & q2) const
     {
         return _imp->FT_lo_tw4(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::FT_nlo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::FT_nlo_tw2(const double & q2) const
     {
         return _imp->FT_nlo_tw2(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::FT_nlo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::FT_nlo_tw3(const double & q2) const
     {
         return _imp->FT_nlo_tw3(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::f_p(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::f_p(const double & q2) const
     {
         return _imp->f_p(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::f_0(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::f_0(const double & q2) const
     {
         return _imp->f_0(q2);
-        //throw InternalError("AnalyticFormFactorDToPiDKMMO2008::f_0: Evaluation of time-like form factor not yet implemented");
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::f_t(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::f_t(const double & q2) const
     {
         return _imp->f_t(q2);
-        //throw InternalError("AnalyticFormFactorDToPiDKMMO2008::f_t: Evaluation of tensor form factor not yet implemented");
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::f_plus_T(const double &) const
+    AnalyticFormFactorDToPiDKMMO2009::f_plus_T(const double &) const
     {
         return 0.0;
-        //throw InternalError("AnalyticFormFactorDToPiDKMMO2008::f_t: Evaluation of tensor form factor not yet implemented");
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::MDp_lcsr(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::MDp_lcsr(const double & q2) const
     {
         return _imp->MDp_lcsr(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::MD0_lcsr(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::MD0_lcsr(const double & q2) const
     {
         return _imp->MD0_lcsr(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::MDT_lcsr(const double & q2) const
+    AnalyticFormFactorDToPiDKMMO2009::MDT_lcsr(const double & q2) const
     {
         return _imp->MDT_lcsr(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::MD_svz() const
+    AnalyticFormFactorDToPiDKMMO2009::MD_svz() const
     {
         return _imp->MD_svz();
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2008::decay_constant() const
+    AnalyticFormFactorDToPiDKMMO2009::decay_constant() const
     {
         return _imp->decay_constant();
     }
 
     Diagnostics
-    AnalyticFormFactorDToPiDKMMO2008::diagnostics() const
+    AnalyticFormFactorDToPiDKMMO2009::diagnostics() const
     {
         return _imp->diagnostics();
     }
 
     const std::set<ReferenceName>
-    AnalyticFormFactorDToPiDKMMO2008::references
+    AnalyticFormFactorDToPiDKMMO2009::references
     {
-        "DKMMO:2008A"_rn,
+        "DKMMO:2009A"_rn,
         "LMvD:2021A"_rn
     };
 
     std::vector<OptionSpecification>::const_iterator
-    AnalyticFormFactorDToPiDKMMO2008::begin_options()
+    AnalyticFormFactorDToPiDKMMO2009::begin_options()
     {
-        return Implementation<AnalyticFormFactorDToPiDKMMO2008>::options.cbegin();
+        return Implementation<AnalyticFormFactorDToPiDKMMO2009>::options.cbegin();
     }
 
     std::vector<OptionSpecification>::const_iterator
-    AnalyticFormFactorDToPiDKMMO2008::end_options()
+    AnalyticFormFactorDToPiDKMMO2009::end_options()
     {
-        return Implementation<AnalyticFormFactorDToPiDKMMO2008>::options.cend();
+        return Implementation<AnalyticFormFactorDToPiDKMMO2009>::options.cend();
     }
 }

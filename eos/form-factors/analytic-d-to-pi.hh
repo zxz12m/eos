@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2014, 2015, 2020 Danny van Dyk
  * Copyright (c) 2019, 2020 Domagoj Leljak
+ * Copyright (c) 2022 Aliaksei Kachanovich
  *
  * This file is part of the EOS project. EOS is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -18,8 +19,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef EOS_GUARD_EOS_FORM_FACTORS_ANALYTIC_B_TO_PI_HH
-#define EOS_GUARD_EOS_FORM_FACTORS_ANALYTIC_B_TO_PI_HH 1
+#ifndef EOS_GUARD_EOS_FORM_FACTORS_ANALYTIC_D_TO_PI_HH
+#define EOS_GUARD_EOS_FORM_FACTORS_ANALYTIC_D_TO_PI_HH 1
 
 #include <eos/form-factors/mesonic.hh>
 #include <eos/utils/diagnostics.hh>
@@ -29,14 +30,14 @@
 
 namespace eos
 {
-    class AnalyticFormFactorDToPiDKMMO2008 :
+    class AnalyticFormFactorDToPiDKMMO2009 :
         public FormFactors<PToP>,
-        PrivateImplementationPattern<AnalyticFormFactorDToPiDKMMO2008>
+        PrivateImplementationPattern<AnalyticFormFactorDToPiDKMMO2009>
     {
         public:
-            AnalyticFormFactorDToPiDKMMO2008(const Parameters &, const Options &);
+            AnalyticFormFactorDToPiDKMMO2009(const Parameters &, const Options &);
 
-            ~AnalyticFormFactorDToPiDKMMO2008();
+            ~AnalyticFormFactorDToPiDKMMO2009();
 
             static FormFactors<PToP> * make(const Parameters &, const Options &);
 
@@ -71,7 +72,7 @@ namespace eos
             double MDT_lcsr(const double & q2) const;
             double MD_svz() const;
 
-            /* B meson decay constant at NLO */
+            /* D meson decay constant at NLO */
             double decay_constant() const;
 
             /* Diagnostics for unit tests */

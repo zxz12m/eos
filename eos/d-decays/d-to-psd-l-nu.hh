@@ -31,7 +31,7 @@
 namespace eos
 {
     /*
-     * Decay: B -> P(seudoscalar) l nu
+     * Decay: D -> P(seudoscalar) l nu
      */
     class DToPseudoscalarLeptonNeutrino :
         public ParameterUser,
@@ -41,7 +41,7 @@ namespace eos
             DToPseudoscalarLeptonNeutrino(const Parameters & parameters, const Options & options);
             ~DToPseudoscalarLeptonNeutrino();
 
-            // Two-fold differential observables - normalized(|V{c,u}b|=1)
+            // Two-fold differential observables - normalized(|Vc{s,d}|=1)
             double normalized_two_differential_decay_width(const double & q2, const double & c_theta_l) const;
 
             // Single-differential Observables
@@ -50,7 +50,7 @@ namespace eos
             double differential_flat_term(const double & q2) const;
             double differential_lepton_polarization(const double & q2) const;
 
-            // Single-differential Observables - normalized(|V{c,u}b|=1)
+            // Single-differential Observables - normalized(|Vc{s,d}|=1)
             double normalized_differential_branching_ratio(const double & q2) const;
 
             // Integrated Observables
