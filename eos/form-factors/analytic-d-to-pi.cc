@@ -40,7 +40,7 @@
 namespace eos
 {
     template <>
-    struct Implementation<AnalyticFormFactorDToPiDKMMO2009>
+    struct Implementation<AnalyticFormFactorDToPiKMMO2009>
     {
         std::shared_ptr<Model> model;
 
@@ -82,20 +82,20 @@ namespace eos
             mpi(p["mass::pi^+"], u),
             fpi(p["decay-constant::pi"], u),
             opt_rescale_borel(o, "rescale-borel", { "1", "0" }, "1"),
-            M2(p["D->pi::M^2@DKMMO2009"], u),
-            Mprime2(p["D->pi::Mp^2@DKMMO2009"], u),
-            _s0_plus(p["D->pi::s_0^+(0)@DKMMO2009"], u),
-            _s0_plus_p(p["D->pi::s_0^+'(0)@DKMMO2009"], u),
-            _s0_plus_pp(p["D->pi::s_0^+''(0)@DKMMO2009"], u),
-            _s0_zero(p["D->pi::s_0^0(0)@DKMMO2009"], u),
-            _s0_zero_p(p["D->pi::s_0^0'(0)@DKMMO2009"], u),
-            _s0_zero_pp(p["D->pi::s_0^0''(0)@DKMMO2009"], u),
-            _s0_T(p["D->pi::s_0^T(0)@DKMMO2009"], u),
-            _s0_T_p(p["D->pi::s_0^T'(0)@DKMMO2009"], u),
-            _s0_T_pp(p["D->pi::s_0^T''(0)@DKMMO2009"], u),
-            sprime0B(p["D->pi::sp_0^B@DKMMO2009"], u),
-            mu(p["D->pi::mu@DKMMO2009"], u),
-            zeta_nnlo(p["D->pi::zeta(NNLO)@DKMMO2009"], u),
+            M2(p["D->pi::M^2@KMMO2009"], u),
+            Mprime2(p["D->pi::Mp^2@KMMO2009"], u),
+            _s0_plus(p["D->pi::s_0^+(0)@KMMO2009"], u),
+            _s0_plus_p(p["D->pi::s_0^+'(0)@KMMO2009"], u),
+            _s0_plus_pp(p["D->pi::s_0^+''(0)@KMMO2009"], u),
+            _s0_zero(p["D->pi::s_0^0(0)@KMMO2009"], u),
+            _s0_zero_p(p["D->pi::s_0^0'(0)@KMMO2009"], u),
+            _s0_zero_pp(p["D->pi::s_0^0''(0)@KMMO2009"], u),
+            _s0_T(p["D->pi::s_0^T(0)@KMMO2009"], u),
+            _s0_T_p(p["D->pi::s_0^T'(0)@KMMO2009"], u),
+            _s0_T_pp(p["D->pi::s_0^T''(0)@KMMO2009"], u),
+            sprime0B(p["D->pi::sp_0^B@KMMO2009"], u),
+            mu(p["D->pi::mu@KMMO2009"], u),
+            zeta_nnlo(p["D->pi::zeta(NNLO)@KMMO2009"], u),
             m02(p["QCD::m_0^2"], u),
             cond_GG(p["QCD::cond_GG"], u),
             r_vac(p["QCD::r_vac"], u),
@@ -282,7 +282,7 @@ namespace eos
             const double s0 = s0D(q2) * (1.0 - _select_corr) + s0tilD(q2) * _select_corr;
             const double u0 = std::max(1e-10, (mc2 - q2) / (s0 - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::F_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiKMMO2009>::F_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -345,7 +345,7 @@ namespace eos
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double s0 = s0D(q2) * (1.0 - _select_corr) + s0tilD(q2) * _select_corr;
             const double u0 = std::max(1e-10, (mc2 - q2) / (s0 - q2));
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::F_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiKMMO2009>::F_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -459,7 +459,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2009], p. 21.
+            // of [KMMO2009], p. 21.
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double a2pi = pi.a2pi(mu), a4pi = pi.a4pi(mu);
             const double r1 = q2 / mc2;
@@ -654,7 +654,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2009], p. 21.
+            // of [KMMO2009], p. 21.
 
             static const double pi2 = M_PI * M_PI;
 
@@ -886,7 +886,7 @@ namespace eos
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double u0 = std::max(1e-10, (mc2 - q2) / (s0tilD(q2) - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::Ftil_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiKMMO2009>::Ftil_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc2 * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -970,7 +970,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2009], p. 21.
+            // of [KMMO2009], p. 21.
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double a2pi = pi.a2pi(mu), a4pi = pi.a4pi(mu);
             const double r1 = q2 / mc2;
@@ -1112,7 +1112,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2009], p. 21.
+            // of [KMMO2009], p. 21.
 
             static const double pi2 = M_PI * M_PI;
 
@@ -1247,7 +1247,7 @@ namespace eos
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double u0 = std::max(1e-10, (mc2 - q2) / (s0TD(q2) - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::FT_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiKMMO2009>::FT_lo_tw2_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -1272,7 +1272,7 @@ namespace eos
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double u0 = std::max(1e-10, (mc2 - q2) / (s0TD(q2) - q2));
 
-            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiDKMMO2009>::FT_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
+            std::function<double (const double &)> integrand(std::bind(&Implementation<AnalyticFormFactorDToPiKMMO2009>::FT_lo_tw3_integrand, this, std::placeholders::_1, q2, _M2, _select_weight));
 
             return mc * fpi * integrate<GSL::QAGS>(integrand, u0, 1.000, config);
         }
@@ -1346,7 +1346,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2009], p. 21.
+            // of [KMMO2009], p. 21.
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double a2pi = pi.a2pi(mu), a4pi = pi.a4pi(mu);
             const double r1 = q2 / mc2;
@@ -1567,7 +1567,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [DKMMO2009], p. 21.
+            // of [KMMO2009], p. 21.
 
             static const double pi2 = M_PI * M_PI;
 
@@ -1849,7 +1849,7 @@ namespace eos
             return std::sqrt(MD2);
         }
 
-        double MD0_lcsr(const double & _q2) const // MB0_lcsr -> MD0_lcsr
+        double MD0_lcsr(const double & _q2) const 
         {
             const double _MD2 = MD * MD, mpi2 = mpi * mpi;
             const double q2 = (std::abs(_q2) > 1e-3) ? _q2 : 1e-3;
@@ -1883,7 +1883,7 @@ namespace eos
             return std::sqrt(MD2);
         }
 
-        double MDT_lcsr(const double & q2) const //MBT_lcsr -> MDT_lcsr
+        double MDT_lcsr(const double & q2) const
         {
             const double M2_rescaled = this->M2() * this->rescale_factor_p(q2);
             const double alpha_s = model->alpha_s(mu);
@@ -1989,186 +1989,186 @@ namespace eos
     };
 
     const std::vector<OptionSpecification>
-    Implementation<AnalyticFormFactorDToPiDKMMO2009>::options
+    Implementation<AnalyticFormFactorDToPiKMMO2009>::options
     {
         { "rescale-borel", { "1", "0" }, "1" }
     };
 
-    AnalyticFormFactorDToPiDKMMO2009::AnalyticFormFactorDToPiDKMMO2009(const Parameters & p, const Options & o) :
-        PrivateImplementationPattern<AnalyticFormFactorDToPiDKMMO2009>(new Implementation<AnalyticFormFactorDToPiDKMMO2009>(p, o, *this))
+    AnalyticFormFactorDToPiKMMO2009::AnalyticFormFactorDToPiKMMO2009(const Parameters & p, const Options & o) :
+        PrivateImplementationPattern<AnalyticFormFactorDToPiKMMO2009>(new Implementation<AnalyticFormFactorDToPiKMMO2009>(p, o, *this))
     {
     }
 
-    AnalyticFormFactorDToPiDKMMO2009::~AnalyticFormFactorDToPiDKMMO2009()
+    AnalyticFormFactorDToPiKMMO2009::~AnalyticFormFactorDToPiKMMO2009()
     {
     }
 
     FormFactors<PToP> *
-    AnalyticFormFactorDToPiDKMMO2009::make(const Parameters & p, const Options & o)
+    AnalyticFormFactorDToPiKMMO2009::make(const Parameters & p, const Options & o)
     {
-        return new AnalyticFormFactorDToPiDKMMO2009(p, o);
+        return new AnalyticFormFactorDToPiKMMO2009(p, o);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::F_lo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::F_lo_tw2(const double & q2) const
     {
         return _imp->F_lo_tw2(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::F_lo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::F_lo_tw3(const double & q2) const
     {
         return _imp->F_lo_tw3(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::F_lo_tw4(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::F_lo_tw4(const double & q2) const
     {
         return _imp->F_lo_tw4(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::F_nlo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::F_nlo_tw2(const double & q2) const
     {
         return _imp->F_nlo_tw2(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::F_nlo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::F_nlo_tw3(const double & q2) const
     {
         return _imp->F_nlo_tw3(q2, _imp->M2() * _imp->rescale_factor_p(q2));
     }
     
     double
-    AnalyticFormFactorDToPiDKMMO2009::Ftil_lo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::Ftil_lo_tw3(const double & q2) const
     {
         return _imp->Ftil_lo_tw3(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::Ftil_lo_tw4(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::Ftil_lo_tw4(const double & q2) const
     {
         return _imp->Ftil_lo_tw4(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::Ftil_nlo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::Ftil_nlo_tw2(const double & q2) const
     {
         return _imp->Ftil_nlo_tw2(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::Ftil_nlo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::Ftil_nlo_tw3(const double & q2) const
     {
         return _imp->Ftil_nlo_tw3(q2, _imp->M2() * _imp->rescale_factor_0(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::FT_lo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::FT_lo_tw2(const double & q2) const
     {
         return _imp->FT_lo_tw2(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::FT_lo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::FT_lo_tw3(const double & q2) const
     {
         return _imp->FT_lo_tw3(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::FT_lo_tw4(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::FT_lo_tw4(const double & q2) const
     {
         return _imp->FT_lo_tw4(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::FT_nlo_tw2(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::FT_nlo_tw2(const double & q2) const
     {
         return _imp->FT_nlo_tw2(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::FT_nlo_tw3(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::FT_nlo_tw3(const double & q2) const
     {
         return _imp->FT_nlo_tw3(q2, _imp->M2() * _imp->rescale_factor_T(q2));
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::f_p(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::f_p(const double & q2) const
     {
         return _imp->f_p(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::f_0(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::f_0(const double & q2) const
     {
         return _imp->f_0(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::f_t(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::f_t(const double & q2) const
     {
         return _imp->f_t(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::f_plus_T(const double &) const
+    AnalyticFormFactorDToPiKMMO2009::f_plus_T(const double &) const
     {
         return 0.0;
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::MDp_lcsr(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::MDp_lcsr(const double & q2) const
     {
         return _imp->MDp_lcsr(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::MD0_lcsr(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::MD0_lcsr(const double & q2) const
     {
         return _imp->MD0_lcsr(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::MDT_lcsr(const double & q2) const
+    AnalyticFormFactorDToPiKMMO2009::MDT_lcsr(const double & q2) const
     {
         return _imp->MDT_lcsr(q2);
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::MD_svz() const
+    AnalyticFormFactorDToPiKMMO2009::MD_svz() const
     {
         return _imp->MD_svz();
     }
 
     double
-    AnalyticFormFactorDToPiDKMMO2009::decay_constant() const
+    AnalyticFormFactorDToPiKMMO2009::decay_constant() const
     {
         return _imp->decay_constant();
     }
 
     Diagnostics
-    AnalyticFormFactorDToPiDKMMO2009::diagnostics() const
+    AnalyticFormFactorDToPiKMMO2009::diagnostics() const
     {
         return _imp->diagnostics();
     }
 
     const std::set<ReferenceName>
-    AnalyticFormFactorDToPiDKMMO2009::references
+    AnalyticFormFactorDToPiKMMO2009::references
     {
-        "DKMMO:2009A"_rn,
+        "KMMO:2009A"_rn,
         "LMvD:2021A"_rn
     };
 
     std::vector<OptionSpecification>::const_iterator
-    AnalyticFormFactorDToPiDKMMO2009::begin_options()
+    AnalyticFormFactorDToPiKMMO2009::begin_options()
     {
-        return Implementation<AnalyticFormFactorDToPiDKMMO2009>::options.cbegin();
+        return Implementation<AnalyticFormFactorDToPiKMMO2009>::options.cbegin();
     }
 
     std::vector<OptionSpecification>::const_iterator
-    AnalyticFormFactorDToPiDKMMO2009::end_options()
+    AnalyticFormFactorDToPiKMMO2009::end_options()
     {
-        return Implementation<AnalyticFormFactorDToPiDKMMO2009>::options.cend();
+        return Implementation<AnalyticFormFactorDToPiKMMO2009>::options.cend();
     }
 }

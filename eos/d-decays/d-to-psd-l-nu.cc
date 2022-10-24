@@ -161,7 +161,7 @@ namespace eos
             opt_D(o, "D", { "s", "d" }),
             opt_q(o, "q", { "u", "d", "s" }, "d"),
             opt_I(o, "I", { "1", "0", "1/2" }),
-            m_D(p["mass::" + _D()], u), //Check which quark we need to use!!!!!
+            m_D(p["mass::" + _D()], u),
             tau_D(p["life_time::D_" + opt_q.value()], u),
             m_P(p["mass::" + _P()], u), 
             opt_l(o, options, "l"),
@@ -188,7 +188,7 @@ namespace eos
             }
             else
             {
-                m_D_msbar = std::bind(&ModelComponent<components::QCD>::m_s_msbar, model.get(), _1); //m_c_msbar -> m_s_msbar
+                m_D_msbar = std::bind(&ModelComponent<components::QCD>::m_s_msbar, model.get(), _1);
                 v_cD      = std::bind(&ModelComponent<components::CKM>::ckm_cs, model.get()); 
                 wc        = std::bind(&ModelComponent<components::WET::UBLNu>::wet_ublnu, model.get(), _1, _2); //Eventually need to be change wet_ublnu -> wet_cdlnu!!!!!!!!!!
             }
