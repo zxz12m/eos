@@ -30,7 +30,7 @@ AM_TESTS_ENVIRONMENT = \
 TESTS = 
 
 LDADD = \
-	$(top_builddir)/test/libeostest.a \
+	$(top_builddir)/test/libeostest.la \
 	libeosddecays.la \
 	$(top_builddir)/eos/form-factors/libeosformfactors.la \
 	$(top_builddir)/eos/utils/libeosutils.la \
