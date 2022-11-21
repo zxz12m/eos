@@ -95,7 +95,7 @@ namespace eos
     struct DToPi {
         using Transition = PToP;
         static constexpr const char * label = "D->pi";
-        static constexpr const double m_D = 1.275; //PDG 2016
+        static constexpr const double m_D = 1.864; //PDG 2016
         static constexpr const double m_P = 0.135;
         static constexpr const double m2_Dr1m = 2.007 * 2.007; // D_{u,d}^*
         static constexpr const double m2_Dr0p = 1.863 * 1.863; // D_{u,d} scalar: M(D_s scalar) - M(D_s^*) + M(D_{u,d}^*), from PDG

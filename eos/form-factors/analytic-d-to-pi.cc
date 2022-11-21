@@ -970,7 +970,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [KMMO2009], p. 21.
+            // of [DKMMO2008], p. 21.
             const double mc = this->m_c_msbar(mu), mc2 = mc * mc;
             const double a2pi = pi.a2pi(mu), a4pi = pi.a4pi(mu);
             const double r1 = q2 / mc2;
@@ -1112,7 +1112,7 @@ namespace eos
             // Reminder: q2 is the kinematic variable associated with the momentum
             // transfer, while s is the kinematic variable in which the function is
             // analytically continued. See also comment at beginning of Appendix B
-            // of [KMMO2009], p. 21.
+            // of [DKMMO2008], p. 21.
 
             static const double pi2 = M_PI * M_PI;
 

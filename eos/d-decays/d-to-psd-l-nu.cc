@@ -83,7 +83,7 @@ namespace eos
 
         UsedParameter mu;
 
-    	static const std::vector<OptionSpecification> options;
+        static const std::vector<OptionSpecification> options;
 
         std::function<double (const double &)> m_D_msbar; 
         std::function<complex<double> ()> v_cD; 
@@ -333,7 +333,7 @@ namespace eos
                        + 16.0 * std::norm(amp.h_T)
                        - 8.0 * std::sqrt(1.0 - amp.v) * std::real(amp.h_T * std::conj(amp.h_0))
                    );
-        } // CHECK COEFFICIENT
+        } 
 
         // obtained using cf. [STTW2013], eq. (49a - 49b)
         double numerator_differential_lepton_polarization(const double & s) const
@@ -350,7 +350,7 @@ namespace eos
                                  - 8.0 * std::sqrt(1.0 - amp.v) * std::real(amp.h_0 * std::conj(amp.h_T));
 
             return 8.0 / 3.0 * amp.NF * amp.p * (dGplus - dGminus);
-        }
+        }//coefficients are taken from B-meson decay B->psd l nu
 
         // differential decay width
         double differential_decay_width(const double & s) const
@@ -430,7 +430,7 @@ namespace eos
         { "l", { "e", "mu", "tau" }, "mu" },
         { "D", { "s", "d" }, "s" },
         { "q", { "u", "d", "s" }, "d" },
-    	{ "I", { "1", "0", "1/2" }, "1" },
+        { "I", { "1", "0", "1/2" }, "1" },
     };
 
     DToPseudoscalarLeptonNeutrino::DToPseudoscalarLeptonNeutrino(const Parameters & parameters, const Options & options) :
