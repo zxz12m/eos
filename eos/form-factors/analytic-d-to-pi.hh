@@ -30,14 +30,14 @@
 
 namespace eos
 {
-    class AnalyticFormFactorDToPiKMMO2009 :
+    class AnalyticFormFactorDToPiKKMO2009 :
         public FormFactors<PToP>,
-        PrivateImplementationPattern<AnalyticFormFactorDToPiKMMO2009>
+        PrivateImplementationPattern<AnalyticFormFactorDToPiKKMO2009>
     {
         public:
-            AnalyticFormFactorDToPiKMMO2009(const Parameters &, const Options &);
+            AnalyticFormFactorDToPiKKMO2009(const Parameters &, const Options &);
 
-            ~AnalyticFormFactorDToPiKMMO2009();
+            ~AnalyticFormFactorDToPiKKMO2009();
 
             static FormFactors<PToP> * make(const Parameters &, const Options &);
 
